@@ -13,16 +13,34 @@ export default function BookAppointment() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingDoctors, setLoadingDoctors] = useState(true);
 
   // search doctors by name or specialization (debounced)
   useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
     const t = setTimeout(() => {
+      setLoadingDoctors(true);
+      setError('');
       api
-        .get('/doctors', { params: { search } })
-        .then((r) => setDoctors(r.data))
-        .catch((e) => setError(errMsg(e)));
+        .get('/doctors', { params: { search: search.trim() }, signal: controller.signal })
+        .then((r) => {
+          if (active) setDoctors(r.data);
+        })
+        .catch((e) => {
+          if (!active || e.code === 'ERR_CANCELED') return;
+          setDoctors([]);
+          setError(errMsg(e));
+        })
+        .finally(() => {
+          if (active) setLoadingDoctors(false);
+        });
     }, 300);
-    return () => clearTimeout(t);
+    return () => {
+      active = false;
+      clearTimeout(t);
+      controller.abort();
+    };
   }, [search]);
 
   const submit = async (e) => {
@@ -56,9 +74,11 @@ export default function BookAppointment() {
           />
           <div className="doctor-list">
             {doctors.map((d) => (
-              <div
+              <button
                 key={d._id}
+                type="button"
                 className={`card doctor-card ${selected?._id === d._id ? 'selected' : ''}`}
+                aria-pressed={selected?._id === d._id}
                 onClick={() => setSelected(d)}
               >
                 <div className="avatar">{d.name.charAt(0).toUpperCase()}</div>
@@ -67,9 +87,15 @@ export default function BookAppointment() {
                   <p className="muted">{d.specialization}</p>
                   <p className="muted">{d.experience} years experience</p>
                 </div>
-              </div>
+              </button>
             ))}
-            {doctors.length === 0 && <p className="muted">No doctors found.</p>}
+            {!loadingDoctors && doctors.length === 0 && (
+              <p className="muted">
+                {search.trim()
+                  ? 'No doctors match your search.'
+                  : 'No doctors are available yet. Please contact the clinic administrator.'}
+              </p>
+            )}
           </div>
         </section>
 

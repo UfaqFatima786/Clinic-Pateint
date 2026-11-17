@@ -17,10 +17,11 @@ cp .env.example .env        # Windows: copy .env.example .env
 `.env` mein `MONGO_URI` apna set karein (local MongoDB ya Atlas) aur `JWT_SECRET` koi bhi lamba random text.
 
 ```bash
-npm run seed    # admin account banata hai
+npm run seed    # admin account aur 4 demo doctors banata hai
 npm run dev     # http://localhost:5000
 ```
 Admin login: **admin@clinic.com / admin123**
+Seed command naye demo doctor accounts ke randomly generated passwords terminal mein ek baar dikhata hai. Un passwords ko save karein; dobara seed chalane par pehle se maujood doctors duplicate nahi honge.
 
 ### 2. Frontend
 ```bash
