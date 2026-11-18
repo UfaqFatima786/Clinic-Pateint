@@ -59,5 +59,7 @@ npm run dev     # http://localhost:5173
 
 ## Deploy (agar chahiye)
 - Database: MongoDB Atlas (free)
-- Backend: Render / Railway (env vars: MONGO_URI, JWT_SECRET, CLIENT_URL = frontend URL)
-- Frontend: Vercel / Netlify (env var: VITE_API_URL = backend URL + /api)
+- Backend ko Vercel par alag project ke taur par deploy karein aur Root Directory `server` rakhein. Is project mein `MONGO_URI`, `JWT_SECRET`, aur `CLIENT_URL` env vars set karein. `CLIENT_URL` mein deployed frontend ka origin dein, misaal: `https://clinic-pateint.vercel.app`.
+- Frontend ke liye doosra Vercel project banayein aur Root Directory `client` rakhein. `VITE_API_URL` ko backend ke deployed origin ke saath `/api` par set karein, misaal: `https://your-backend.vercel.app/api`.
+- Dono projects ke env vars save karne ke baad redeploy karein. Local `.env` ki `localhost` value deployed build mein istemal nahi honi chahiye.
+- API routes POST/GET methods ke mutabiq hain. Browser address bar se `/api/auth/login` kholne par GET hota hai; login aur registration ko frontend form se test karein, kyun ke dono POST requests hain.
