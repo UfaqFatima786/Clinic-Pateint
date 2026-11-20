@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
-
 const ADMIN_EMAIL = 'admin@clinic.com';
 const ADMIN_PASSWORD = 'admin123';
 const DEMO_DOCTORS = [
@@ -32,7 +31,6 @@ const DEMO_DOCTORS = [
     experience: 5,
   },
 ];
-
 (async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -48,7 +46,6 @@ const DEMO_DOCTORS = [
       });
       console.log(`Admin created -> email: ${ADMIN_EMAIL}  password: ${ADMIN_PASSWORD}`);
     }
-
     const existingDoctors = new Set(
       (
         await User.find({ email: { $in: DEMO_DOCTORS.map((doctor) => doctor.email) } })
@@ -59,7 +56,6 @@ const DEMO_DOCTORS = [
     const createdDoctors = [];
     for (const doctor of DEMO_DOCTORS) {
       if (existingDoctors.has(doctor.email)) continue;
-
       const password = crypto.randomBytes(18).toString('base64url');
       await User.create({
         ...doctor,
@@ -68,7 +64,6 @@ const DEMO_DOCTORS = [
       });
       createdDoctors.push({ email: doctor.email, password });
     }
-
     if (createdDoctors.length) {
       console.log('Demo doctor accounts created. Save these generated passwords:');
       createdDoctors.forEach(({ email, password }) => console.log(`${email} / ${password}`));
