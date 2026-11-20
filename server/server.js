@@ -17,6 +17,7 @@ app.use(
   })
 );
 app.use(express.json());
+
 let connecting;
 const connectDB = async () => {
   if (mongoose.connection.readyState === 1) return;
@@ -28,6 +29,22 @@ const connectDB = async () => {
     throw err;
   }
 };
+app.get('/api/health', async (req, res) => {
+  const info = {
+    mongoUriSet: Boolean(process.env.MONGO_URI),
+    mongoUriStartsWith: (process.env.MONGO_URI || '').slice(0, 14),
+    jwtSecretSet: Boolean(process.env.JWT_SECRET),
+    clientUrl: process.env.CLIENT_URL || null,
+  };
+  try {
+    await connectDB();
+    info.db = 'connected';
+  } catch (err) {
+    info.db = 'failed';
+    info.error = err.message;
+  }
+  res.json(info);
+});
 
 app.use(async (req, res, next) => {
   try {
@@ -35,7 +52,7 @@ app.use(async (req, res, next) => {
     next();
   } catch (err) {
     console.error('MongoDB connection failed:', err.message);
-    res.status(500).json({ message: 'Database connection failed' });
+    res.status(500).json({ message: 'Database connection failed', detail: err.message });
   }
 });
 
@@ -45,6 +62,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/doctors', require('./routes/doctors'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/admin', require('./routes/admin'));
+
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   connectDB()
