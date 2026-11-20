@@ -35,7 +35,6 @@ router.post('/register', async (req, res) => {
     if (exists) return res.status(400).json({ message: 'Email already registered' });
 
     const hashed = await bcrypt.hash(password, 10);
-    // role is forced to patient so nobody can self-register as admin/doctor
     const user = await User.create({ name, email, password: hashed, role: 'patient' });
 
     res.status(201).json({ token: signToken(user._id, jwtSecret), user: userPayload(user) });
@@ -43,8 +42,6 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-// POST /api/auth/login  (public)
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
