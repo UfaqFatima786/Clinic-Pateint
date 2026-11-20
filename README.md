@@ -62,4 +62,5 @@ npm run dev     # http://localhost:5173
 - Backend ko Vercel par alag project ke taur par deploy karein aur Root Directory `server` rakhein. Is project mein `MONGO_URI`, `JWT_SECRET`, aur `CLIENT_URL` env vars set karein. `CLIENT_URL` mein deployed frontend ka origin dein, misaal: `https://clinic-pateint.vercel.app`.
 - Frontend ke liye doosra Vercel project banayein aur Root Directory `client` rakhein. `VITE_API_URL` ko backend ke deployed origin ke saath `/api` par set karein, misaal: `https://your-backend.vercel.app/api`.
 - Dono projects ke env vars save karne ke baad redeploy karein. Local `.env` ki `localhost` value deployed build mein istemal nahi honi chahiye.
+- `JWT_SECRET` backend ke Vercel project mein non-empty secret hona zaroori hai. Is ke baghair signup account create nahi karega aur login token issue nahi kar sakega. Patient apna password registration form mein khud choose karta hai.
 - API routes POST/GET methods ke mutabiq hain. Browser address bar se `/api/auth/login` kholne par GET hota hai; login aur registration ko frontend form se test karein, kyun ke dono POST requests hain.
